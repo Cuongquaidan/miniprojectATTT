@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>HaManhCuong_22646171</title>
+        <link rel="stylesheet" href="./assets/css/bootstrap.css" />
+        <script src="./assets/jsencrypt-master/jsencrypt-master/bin/jsencrypt.min.js"></script>
+        <script src="./node_modules/blueimp-md5/js/md5.min.js"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                word-wrap: break-word;
+            }
+        </style>
+    </head>
+    <body>
+        <div
+            class="container"
+            style="display: flex; flex-direction: column; gap: 20px"
+        >
+            <h2>RSA</h2>
+            <h4>Text</h4>
+            <input type="text" class="text form-control" id="inputtext" />
+            <h4>Public key</h4>
+            <textarea
+                name="publicKey"
+                id="publicKey"
+                cols="30"
+                rows="5"
+                class="form-control"
+                disabled
+            ></textarea>
+            <h4>Private key</h4>
+            <textarea
+                name="privateKey"
+                id="privateKey"
+                cols="30"
+                rows="5"
+                class="form-control"
+                disabled
+            ></textarea>
+            <button class="btn btn-primary" onclick="performEncryption()">
+                Encrypt
+            </button>
+            <h4>Cipher text</h4>
+            <div id="encrptedtext" style="width: 100%; height: 50px"></div>
+            <button class="btn btn-primary" onclick="performDecryption()">
+                Decrypt
+            </button>
+            <h4>Original text</h4>
+            <div id="decryptedtext" style="width: 100%; height: 50px"></div>
+            <h2>OTP</h2>
+            <input type="text" class="OTP-input form-control" />
+            <div
+                class="OTP"
+                style="display: flex; font-size: 20px; font-weight: 600"
+            >
+                <p class="otp-p"></p>
+                <p class="otp-p"></p>
+                <p class="otp-p"></p>
+                <p class="otp-p"></p>
+                <p class="otp-p"></p>
+                <p class="otp-p"></p>
+                <div
+                    class="otp-reset"
+                    style="
+                        margin-left: 30px;
+                        cursor: pointer;
+                        user-select: none;
+                    "
+                    onclick="generateOTP()"
+                >
+                    RESET
+                </div>
+            </div>
+            <div class="otp-error"></div>
+            <button class="btn btn-primary" onclick="checkOTP()">CHECK</button>
+        </div>
+
+        <script src="./assets/js/bootstrap.js"></script>
+
+        <script>
+            /*Creating instance*/
+            var cryptofunction;
+
+            var ciphertext;
+            var originaltext;
+
+            /*function to perform encryption*/
+            function performEncryption() {
+                /*Generating public and private key*/
+                cryptofunction = new JSEncrypt();
+                var pubickey = cryptofunction.getPublicKey();
+                var pvtkey = cryptofunction.getPrivateKey();
+
+                /*Setting public and private key*/
+                cryptofunction.setPublicKey(pubickey);
+                cryptofunction.setPrivateKey(pvtkey);
+
+                var tempval = document.getElementById("inputtext").value;
+                ciphertext = cryptofunction.encrypt(tempval);
+                document.getElementById("encrptedtext").innerHTML = ciphertext;
+                const pubkey = document.querySelector("#publicKey");
+                const prikey = document.querySelector("#privateKey");
+                pubkey.value = pubickey;
+                prikey.value = pvtkey;
+            }
+
+            /*function to perform decryption*/
+            function performDecryption() {
+                originaltext = cryptofunction.decrypt(ciphertext);
+                document.getElementById("decryptedtext").innerHTML =
+                    originaltext;
+            }
+            function randomNumber() {
+                return Math.floor(Math.random() * 10);
+            }
+            function randomText() {
+                const texts = [
+                    "Q",
+                    "W",
+                    "E",
+                    "R",
+                    "T",
+                    "Y",
+                    "U",
+                    "I",
+                    "O",
+                    "P",
+                    "A",
+                    "S",
+                    "D",
+                    "F",
+                    "G",
+                    "H",
+                    "J",
+                    "K",
+                    "L",
+                    "Z",
+                    "X",
+                    "C",
+                    "V",
+                    "B",
+                    "N",
+                    "M",
+                ];
+                return texts[Math.floor(Math.random() * texts.length)];
+            }
+            function randomColor() {
+                const colors = [
+                    "purple",
+                    "red",
+                    "green",
+                    "blue",
+                    "black",
+                    "orange",
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            function randomPadding() {
+                return Math.floor(Math.random() * 4);
+            }
+            let OTPText = "";
+            function generateOTP() {
+                const otpp = document.querySelectorAll(".otp-p");
+                OTPText = "";
+                for (let i = 0; i < 6; i++) {
+                    let j = Math.floor(Math.random() * 2);
+                    if (j == 1) {
+                        otpp.item(i).textContent = randomNumber();
+                    } else {
+                        otpp.item(i).textContent = randomText();
+                    }
+                    OTPText += otpp.item(i).textContent;
+                    otpp.item(
+                        i
+                    ).style = `padding:${randomPadding()}px;color:${randomColor()}`;
+                }
+            }
+            generateOTP();
+            const otpInput = document.querySelector(".OTP-input");
+            const otpError = document.querySelector(".otp-error");
+
+            function checkOTP() {
+                if (otpInput.value !== OTPText) {
+                    otpError.textContent = "Incorrect.....................";
+                    otpError.style = "color:red;font-size:20px";
+                } else {
+                    otpError.textContent = "Correct.....................";
+                    otpError.style = "color:green;font-size:20px";
+                }
+            }
+        </script>
+    </body>
+</html>
